@@ -1,5 +1,5 @@
 defaults:
-  - model: baseline
+  - model: LCNN
   - metrics: example
   - datasets: example_eval # we do not want to run inference on training data
   - dataloader: example

@@ -1,5 +1,5 @@
-from src.model.baseline_model import BaselineModel
+from src.model.LCNN_model import LCNN
 
 __all__ = [
-    "BaselineModel",
+    "LCNN",
 ]
