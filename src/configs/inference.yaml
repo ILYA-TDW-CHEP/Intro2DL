@@ -1,7 +1,7 @@
 defaults:
   - model: LCNN
   - metrics: example
-  - datasets: example_eval # we do not want to run inference on training data
+  - datasets: ASVspoof_eval # we do not want to run inference on training data
   - dataloader: example
   - transforms: example
   - _self_

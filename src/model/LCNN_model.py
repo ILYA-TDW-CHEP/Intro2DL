@@ -14,8 +14,8 @@ class MFM(nn.Module):
         x1, x2 = torch.chunk(x, 2, dim=1)
         return torch.max(x1, x2)
 
-class LCNN(nn.Module):
 
+class LCNN(nn.Module):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -61,7 +61,7 @@ class LCNN(nn.Module):
         )
 
         self.LinearPart = Sequential(
-            nn.Linear(in_features = 32 * 54 * 37, out_features=160),                              # Layer 29
+            nn.Linear(in_features=32 * 54 * 37, out_features=160),                              # Layer 29
             nn.Dropout(p=0.25),
             MFM(),                                                                                # Layer 30
             nn.BatchNorm1d(80),                                                                   # Layer 31
@@ -77,7 +77,6 @@ class LCNN(nn.Module):
         Returns:
             output (dict): output dict containing logits.
         """
-        data_object = data_object.squeeze(1)
         data_object = self.ConvPart(data_object)
         data_object = data_object.view(data_object.size(0), -1)
         data_object = self.LinearPart(data_object)

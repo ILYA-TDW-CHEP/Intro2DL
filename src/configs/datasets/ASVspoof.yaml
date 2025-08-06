@@ -1,0 +1,8 @@
+train:
+  _target_: src.datasets.ASVspoofDataSet
+  name: "train"
+  instance_transforms: ${transforms.instance_transforms.train}
+test:
+  _target_: src.datasets.ASVspoofDataSet
+  name: "eval"
+  instance_transforms: ${transforms.instance_transforms.inference}

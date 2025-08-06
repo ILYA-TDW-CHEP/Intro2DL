@@ -1,10 +1,11 @@
 import torch
-
+import numpy as np
+from sklearn.metrics import roc_curve
 from src.metrics.base_metric import BaseMetric
 
 
 class ExampleMetric(BaseMetric):
-    def __init__(self, metric, device, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Example of a nested metric class. Applies metric function
         object (for example, from TorchMetrics) on tensors.
@@ -17,19 +18,16 @@ class ExampleMetric(BaseMetric):
             device (str): device for the metric calculation (and tensors).
         """
         super().__init__(*args, **kwargs)
-        if device == "auto":
-            device = "cuda" if torch.cuda.is_available() else "cpu"
-        self.metric = metric.to(device)
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
 
     def __call__(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs):
-        """
-        Metric calculation logic.
+        scores = torch.softmax(logits, dim=1)[:, 1].detach().cpu()
+        fpr, tpr, threshold = roc_curve(labels, scores, pos_label=0)
+        fnr = 1 - tpr
+        _ = threshold[np.argmin(abs(fnr - fpr))]
 
-        Args:
-            logits (Tensor): model output predictions.
-            labels (Tensor): ground-truth labels.
-        Returns:
-            metric (float): calculated metric.
-        """
-        classes = logits.argmax(dim=-1)
-        return self.metric(classes, labels)
+        EER_fpr = fpr[np.argmin(np.absolute((fnr - fpr)))]
+        EER_fnr = fnr[np.argmin(np.absolute((fnr - fpr)))]
+        EER = 0.5 * (EER_fpr + EER_fnr)
+
+        return EER

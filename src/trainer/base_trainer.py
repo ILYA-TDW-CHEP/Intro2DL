@@ -4,6 +4,7 @@ import torch
 from numpy import inf
 from torch.nn.utils import clip_grad_norm_
 from tqdm.auto import tqdm
+import time
 
 from src.datasets.data_utils import inf_loop
 from src.metrics.tracker import MetricTracker
@@ -202,9 +203,9 @@ class BaseTrainer:
         self.train_metrics.reset()
         self.writer.set_step((epoch - 1) * self.epoch_len)
         self.writer.add_scalar("epoch", epoch)
-        for batch_idx, batch in enumerate(
-            tqdm(self.train_dataloader, desc="train", total=self.epoch_len)
-        ):
+        self.train_dataloader_iter = iter(self.train_dataloader)
+        for batch_idx in tqdm(range(self.epoch_len), desc="train"):
+            batch = next(self.train_dataloader_iter)
             try:
                 batch = self.process_batch(
                     batch,
@@ -217,7 +218,6 @@ class BaseTrainer:
                     continue
                 else:
                     raise e
-
             self.train_metrics.update("grad_norm", self._get_grad_norm())
 
             # log current results

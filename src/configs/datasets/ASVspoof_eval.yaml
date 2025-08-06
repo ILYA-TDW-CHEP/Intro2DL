@@ -1,0 +1,4 @@
+test:
+  _target_: src.datasets.ASVspoofDataSet
+  name: "eval"
+  instance_transforms: ${transforms.instance_transforms.inference}
