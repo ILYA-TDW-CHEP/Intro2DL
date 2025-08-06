@@ -16,7 +16,7 @@ lr_scheduler:
 loss_function:
   _target_: src.loss.ExampleLoss
 trainer:
-  log_step: 5
+  log_step: 25
   n_epochs: 10
   epoch_len: 1
   device_tensors: ["data_object", "labels"] # which tensors should be on device (ex. GPU)

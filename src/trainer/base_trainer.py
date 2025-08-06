@@ -9,6 +9,7 @@ import time
 from src.datasets.data_utils import inf_loop
 from src.metrics.tracker import MetricTracker
 from src.utils.io_utils import ROOT_PATH
+from src.metrics.example import ExampleMetric
 
 
 class BaseTrainer:
@@ -263,6 +264,7 @@ class BaseTrainer:
         self.is_train = False
         self.model.eval()
         self.evaluation_metrics.reset()
+        metric = ExampleMetric()
         with torch.no_grad():
             for batch_idx, batch in tqdm(
                 enumerate(dataloader),
@@ -271,15 +273,16 @@ class BaseTrainer:
             ):
                 batch = self.process_batch(
                     batch,
-                    metrics=self.evaluation_metrics,
+                    metrics=self.evaluation_metrics, metric=metric
                 )
             self.writer.set_step(epoch * self.epoch_len, part)
+            self._log_scalars(metric())
             self._log_scalars(self.evaluation_metrics)
             self._log_batch(
                 batch_idx, batch, part
             )  # log only the last batch during inference
 
-        return self.evaluation_metrics.result()
+        return {'err': metric()}
 
     def _monitor_performance(self, logs, not_improved_count):
         """

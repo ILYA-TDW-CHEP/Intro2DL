@@ -19,10 +19,22 @@ class ExampleMetric(BaseMetric):
         """
         super().__init__(*args, **kwargs)
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.preds = []
+        self.targets = []
+    
+    def reset(self):
+        self.preds = []
+        self.targets = []
 
-    def __call__(self, logits: torch.Tensor, labels: torch.Tensor, **kwargs):
-        scores = torch.softmax(logits, dim=1)[:, 1].detach().cpu()
-        fpr, tpr, threshold = roc_curve(labels, scores, pos_label=0)
+    def update(self, preds, targets):
+        self.preds.append(preds.detach().cpu()[0])
+        self.targets.append(targets.detach().cpu())
+
+    def __call__(self, **kwargs):
+        preds = torch.cat(self.preds).numpy()
+        targets = torch.cat(self.targets).numpy()
+
+        fpr, tpr, threshold = roc_curve(targets, preds, pos_label=0)
         fnr = 1 - tpr
         _ = threshold[np.argmin(abs(fnr - fpr))]
 
