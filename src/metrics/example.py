@@ -27,7 +27,7 @@ class ExampleMetric(BaseMetric):
         self.targets = []
 
     def update(self, preds, targets):
-        self.preds.append(preds.detach().cpu()[0])
+        self.preds.append(preds.detach().cpu()[:, 0])
         self.targets.append(targets.detach().cpu())
 
     def __call__(self, **kwargs):

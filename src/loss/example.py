@@ -9,7 +9,9 @@ class ExampleLoss(nn.Module):
 
     def __init__(self):
         super().__init__()
-        self.loss = nn.CrossEntropyLoss()
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        weights = torch.tensor([0.5, 5.0], dtype=torch.float32).to(self.device)
+        self.loss = nn.CrossEntropyLoss(weight=weights)
 
     def forward(self, logits: torch.Tensor, labels: torch.Tensor, **batch):
         """

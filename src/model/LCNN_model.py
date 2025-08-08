@@ -23,12 +23,12 @@ class LCNN(nn.Module):
             nn.Conv2d(in_channels=1, out_channels=64, kernel_size=5, stride=1, padding='same'),   # Layer 1
             MFM(),                                                                                # Layer 2
             nn.MaxPool2d(kernel_size=2, stride=2),                                                # Layer 3
-            nn.Dropout2d(p=0.25),
+            nn.Dropout2d(p=0.15),
 
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=1, stride=1),                  # Layer 4
             MFM(),                                                                                # Layer 5
             nn.BatchNorm2d(32),                                                                   # Layer 6
-            nn.Dropout2d(p=0.25),
+            nn.Dropout2d(p=0.15),
 
             nn.Conv2d(in_channels=32, out_channels=96, kernel_size=3, stride=1, padding='same'),  # Layer 7
             MFM(),                                                                                # Layer 8
@@ -42,7 +42,7 @@ class LCNN(nn.Module):
             nn.Conv2d(in_channels=48, out_channels=128, kernel_size=3, stride=1, padding='same'),  # Layer 14
             MFM(),                                                                                # Layer 15
             nn.MaxPool2d(kernel_size=2, stride=2),                                                # Layer 16
-            nn.Dropout2d(p=0.25),
+            nn.Dropout2d(p=0.15),
 
             nn.Conv2d(in_channels=64, out_channels=128, kernel_size=1, stride=1),                 # Layer 17
             MFM(),                                                                                # Layer 18
@@ -62,7 +62,7 @@ class LCNN(nn.Module):
 
         self.LinearPart = Sequential(
             nn.Linear(in_features=32 * 54 * 37, out_features=160),                              # Layer 29
-            nn.Dropout(p=0.25),
+            nn.Dropout(p=0.15),
             MFM(),                                                                                # Layer 30
             nn.BatchNorm1d(80),                                                                   # Layer 31
             nn.Linear(in_features=80, out_features=2)                                             # Layer 32

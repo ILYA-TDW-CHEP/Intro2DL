@@ -5,6 +5,7 @@ from numpy import inf
 from torch.nn.utils import clip_grad_norm_
 from tqdm.auto import tqdm
 import time
+import wandb
 
 from src.datasets.data_utils import inf_loop
 from src.metrics.tracker import MetricTracker
@@ -276,13 +277,13 @@ class BaseTrainer:
                     metrics=self.evaluation_metrics, metric=metric
                 )
             self.writer.set_step(epoch * self.epoch_len, part)
-            self._log_scalars(metric())
             self._log_scalars(self.evaluation_metrics)
             self._log_batch(
                 batch_idx, batch, part
             )  # log only the last batch during inference
-
-        return {'err': metric()}
+        err = metric()
+        wandb.log({"test_err" : err})
+        return {'err': err}
 
     def _monitor_performance(self, logs, not_improved_count):
         """
@@ -548,7 +549,7 @@ class BaseTrainer:
             self.logger.info(f"Loading model weights from: {pretrained_path} ...")
         else:
             print(f"Loading model weights from: {pretrained_path} ...")
-        checkpoint = torch.load(pretrained_path, self.device)
+        checkpoint = torch.load(pretrained_path, self.device, weights_only=False)
 
         if checkpoint.get("state_dict") is not None:
             self.model.load_state_dict(checkpoint["state_dict"])

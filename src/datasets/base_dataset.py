@@ -60,7 +60,7 @@ class BaseDataset(Dataset):
         data_object = self.load_object(data_path)
         data_label = data_dict["label"]
 
-        instance_data = {"data_object": data_object, "labels": data_label}
+        instance_data = {"data_object": data_object, "labels": data_label, "path" : data_path}
         instance_data = self.preprocess_data(instance_data)
 
         return instance_data

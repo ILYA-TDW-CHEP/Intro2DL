@@ -1,4 +1,6 @@
 import torch
+import csv
+from pathlib import Path
 from tqdm.auto import tqdm
 
 from src.metrics.tracker import MetricTracker
@@ -122,33 +124,31 @@ class Inferencer(BaseTrainer):
         outputs = self.model(**batch)
         batch.update(outputs)
 
-        if metrics is not None:
-            for met in self.metrics["inference"]:
-                metrics.update(met.name, met(**batch))
+        # if metrics is not None:
+        #     for met in self.metrics["inference"]:
+        #         metrics.update(met.name, met(**batch))
 
         # Some saving logic. This is an example
         # Use if you need to save predictions on disk
 
         batch_size = batch["logits"].shape[0]
-        current_id = batch_idx * batch_size
+
+        rows_to_save = []
 
         for i in range(batch_size):
-            # clone because of
-            # https://github.com/pytorch/pytorch/issues/1995
             logits = batch["logits"][i].clone()
-            label = batch["labels"][i].clone()
-            pred_label = logits.argmax(dim=-1)
+            probs = torch.nn.functional.softmax(logits, dim=-1)
+            prob = probs[1].item()
 
-            output_id = current_id + i
+            full_path = batch["path"][i]
+            object_name = Path(full_path).stem
 
-            output = {
-                "pred_label": pred_label,
-                "label": label,
-            }
+            rows_to_save.append([object_name, prob])
 
-            if self.save_path is not None:
-                # you can use safetensors or other lib here
-                torch.save(output, self.save_path / part / f"output_{output_id}.pth")
+        if self.save_path is not None:
+            with open(self.save_path / "ikchepeliuk.csv", mode='a', newline='') as f:
+                writer = csv.writer(f)
+                writer.writerows(rows_to_save)
 
         return batch
 

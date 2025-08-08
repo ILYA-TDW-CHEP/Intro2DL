@@ -11,14 +11,14 @@ optimizer:
   lr: 3e-4
 lr_scheduler:
   _target_: torch.optim.lr_scheduler.CosineAnnealingLR
-  T_max: 15860
-  eta_min: 3e-6
+  T_max: 47580
+  eta_min: 1e-6
 loss_function:
   _target_: src.loss.ExampleLoss
 trainer:
   log_step: 25
-  n_epochs: 10
-  epoch_len: 1
+  n_epochs: 12
+  epoch_len: 3172
   device_tensors: ["data_object", "labels"] # which tensors should be on device (ex. GPU)
   resume_from: null # null or path to the checkpoint dir with *.pth and config.yaml
   device: auto # device name or "auto"

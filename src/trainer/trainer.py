@@ -29,13 +29,12 @@ class Trainer(BaseTrainer):
         """
         batch = self.move_batch_to_device(batch)
         batch = self.transform_batch(batch)  # transform batch on device -- faster
-        metric_funcs = self.metrics["inference"]
+        # metric_funcs = self.metrics["inference"]
         if self.is_train:
-            metric_funcs = self.metrics["train"]
+            # metric_funcs = self.metrics["train"]
             self.optimizer.zero_grad()
         outputs = self.model(**batch)
         if metric:
-            print(outputs["logits"])
             metric.update(outputs['logits'], batch["labels"])
         batch.update(outputs)
 
