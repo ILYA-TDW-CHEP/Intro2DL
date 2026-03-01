@@ -4,7 +4,7 @@
 <a href="https://github.com/Blinorot/pytorch_project_template/generate">
   <img src="https://img.shields.io/badge/use%20this-template-green?logo=github">
 </a>
-<a href="https://github.com/ILYA-TDW-CHEP/Intro2DL/src/LICENSE">
+<a href="/LICENSE">
    <img src=https://img.shields.io/badge/license-MIT-blue.svg>
 </a>
 </p>
